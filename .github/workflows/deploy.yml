@@ -51,6 +51,7 @@ jobs:
               kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest -n blogy
               kubectl rollout status deployment/blogy-frontend -n blogy
               kubectl rollout status deployment/blogy-backend -n blogy
+              echo "Deplyement succesfull"
 
 
 
