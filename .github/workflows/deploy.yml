@@ -23,7 +23,7 @@ jobs:
             npm ci
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/bogy-backend:latest .
         - name: push backend to hub
-          uses: appleboy/ssh-action@v4
+          uses: appleboy/ssh-action@v1.2.4
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -41,7 +41,7 @@ jobs:
 
   #Deploy to EC2 K8S
         - name: Deploy to EC2 K8S
-          uses: appleboy/ssh-action@v4
+          uses: appleboy/ssh-action@v1.2.4
           with:
             host: ${{ secrets.EC2_PUBLIC_IP }}
             username: ubuntu
