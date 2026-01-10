@@ -3,7 +3,7 @@ FROM node:18-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
-RUN npm build
+RUN npm run build
 
 # Run stage
 FROM nginx:alpine
