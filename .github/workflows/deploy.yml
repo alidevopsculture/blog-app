@@ -23,7 +23,7 @@ jobs:
             npm ci
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/bogy-backend:latest .
         - name: push backend to hub
-          uses: appleboy/ssh-action@v3
+          uses: appleboy/ssh-action@v1.0.3
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -47,10 +47,10 @@ jobs:
             username: ubuntu
             key: ${{ secrets.EC2_SSH_KEY }}
             script: |
-              kubectl set image deployment/frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest
-              kubectl set image deployment/backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest
-              kubectl rollout status deployment/frontend
-              kubectl rollout status deployment/backend
+              kubectl set image deployment/blogy-frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest -n blogy
+              kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest -n blogy
+              kubectl rollout status deployment/blogy-frontend -n blogy
+              kubectl rollout status deployment/blogy-backend -n blogy
 
 
 
