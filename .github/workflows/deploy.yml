@@ -15,7 +15,7 @@ jobs:
       runs-on: ubuntu-latest
       steps: 
         - name: Checout Code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v1.0.3
     # Backend Build + Docker Push
         - name: build backend
           run: |
@@ -41,7 +41,7 @@ jobs:
 
   #Deploy to EC2 K8S
         - name: Deploy to EC2 K8S
-          uses: appleboy/ssh-action@v3
+          uses: appleboy/ssh-action@v1.0.3
           with:
             host: ${{ secrets.EC2_PUBLIC_IP }}
             username: ubuntu
