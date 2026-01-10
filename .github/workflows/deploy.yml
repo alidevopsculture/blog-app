@@ -28,7 +28,7 @@ jobs:
       # BLOCK 3: Backend Build + Push
       - name: Build Backend
         run: |
-          cd server
+          cd blogy-backend
           npm ci
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest
@@ -36,6 +36,7 @@ jobs:
       # BLOCK 4: Frontend Build + Push  
       - name: Build Frontend
         run: |
+          cd blogy-frontend
           npm ci
           npm run build
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest .
