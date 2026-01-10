@@ -160,7 +160,7 @@ export const topAuthors = [
   {
     id: "priya_sharma",
     name: "Priya Sharma",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
+    avatar: "https://ui-avatars.com/api/?name=Priya+Sharma&background=61dafb",
     postsCount: 8
   },
   {

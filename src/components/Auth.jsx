@@ -31,16 +31,16 @@ const Auth = ({ onClose }) => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (isLogin) {
-      login(formData.email, formData.password)
-      onClose()
+      const result = await login(formData.email, formData.password)
+      if (result) onClose()
     } else if (!showOTP) {
       sendOTP()
     } else {
-      signup(formData.email, formData.password, formData.name, formData.otp)
-      onClose()
+      const result = await signup(formData.email, formData.password, formData.name, formData.otp)
+      if (result) onClose()
     }
   }
 

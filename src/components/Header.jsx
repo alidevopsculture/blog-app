@@ -15,7 +15,7 @@ const Header = () => {
       <header className="header section" data-header>
         <div className="container">
           <button onClick={() => navigate('/')} className="logo">
-            <img src="/src/assets/logo.png" height = "150px" alt="Blogy logo" />
+            <img src="/logo.svg" height="60px" alt="Blogy logo" />
           </button>
 
           <nav className={`navbar ${isNavOpen ? 'active' : ''}`} data-navbar>

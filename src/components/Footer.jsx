@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="footer-top section">
           <div className="footer-brand">
             <a href="#" className="logo">
-              <img src="https://via.placeholder.com/129x40/000000/ffffff?text=Blogy" width="129" height="40" alt="Blogy logo" />
+              <img src="/logo.svg" width="129" height="40" alt="Blogy logo" />
             </a>
             <p className="footer-text">
               A minimal, functional theme for running a paid-membership publication on Ghost.

@@ -22,16 +22,33 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false)
   }, [])
 
-  const login = (email, password) => {
-    const userData = {
-      id: Date.now(),
-      email,
-      name: email.split('@')[0],
-      avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random`
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        const userWithAvatar = {
+          ...data.user,
+          avatar: data.user.avatar || `https://ui-avatars.com/api/?name=${data.user.name}&background=random`
+        }
+        setUser(userWithAvatar)
+        localStorage.setItem('user', JSON.stringify(userWithAvatar))
+        localStorage.setItem('token', data.token)
+        return userWithAvatar
+      } else {
+        const error = await response.json()
+        alert(error.message)
+        return null
+      }
+    } catch (error) {
+      alert('Login failed')
+      return null
     }
-    setUser(userData)
-    localStorage.setItem('user', JSON.stringify(userData))
-    return userData
   }
 
   const signup = async (email, password, name, otp) => {

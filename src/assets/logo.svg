@@ -1,0 +1,18 @@
+<svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Modern hexagon shape -->
+  <polygon points="15,5 35,5 45,25 35,45 15,45 5,25" fill="url(#logoGradient)" />
+  
+  <!-- Stylized B -->
+  <path d="M18 15 L18 35 L28 35 Q32 35 32 30 Q32 25 28 25 L28 25 Q30 25 30 20 Q30 15 26 15 Z M22 19 L26 19 Q26 19 26 21 Q26 21 22 21 Z M22 25 L28 25 Q28 25 28 31 Q28 31 22 31 Z" fill="white" />
+  
+  <!-- Modern typography -->
+  <text x="55" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#1f2937">Blogy</text>
+  <text x="55" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="400" fill="#6b7280">Modern Blogging</text>
+</svg>

@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost', 'http://localhost:80'],
   credentials: true
 }));
 app.use(express.json());
@@ -23,6 +23,11 @@ mongoose.connect(process.env.MONGODB_URI)
 // Test route
 app.get('/test', (req, res) => {
   res.json({ message: 'Server is working!' });
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
 // Routes
