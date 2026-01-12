@@ -1,57 +1,47 @@
-#BLOCK 1: WORKFLOW METADATA
-name: Deploy-blog
-# BLOCK 2: TRIGGERS (When to Run)
+name: Blogy CI/CD Pipeline
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
-#BLOCK 3: JOBS (What Work to Do)
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      # BLOCK 1: Checkout code
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    # 1. Code checkout
+    - uses: actions/checkout@v4
 
-      # BLOCK 2: DockerHub login
-      - name: Docker login
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    # 2. Docker login
+    - name: Docker login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # BLOCK 3: Backend Build + Push
-      - name: Build Backend
-        run: |
-          cd blogy-backend
-          npm ci
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest
+    # 3. Build & Push Frontend
+    - name: Build Frontend
+      run: |
+        cd blogy-frontend
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/blogy-frontend-image:latest .
+        docker push ${{ secrets.DOCKERHUB_USERNAME}}/blogy-frontend-image:latest
 
-      # BLOCK 4: Frontend Build + Push  
-      - name: Build Frontend
-        run: |
-          cd blogy-frontend
-          npm ci
-          npm run build
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest
+    # 4. Build & Push Backend.  
+    - name: Build Backend
+      run: |
+        cd blogy-backend
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/blogy-backend-image:latest .
+        docker push ${{ secrets.DOCKERHUB_USERNAME}}/blogy-backend-image:latest
 
-      # BLOCK 5: Deploy to EC2 Kubernetes
-      - name: Deploy to EC2 K8S
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            kubectl set image deployment/blogy-frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend:latest -n blogy || true
-            kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend:latest -n blogy || true
-            kubectl rollout status deployment/blogy-frontend -n blogy || true
-            kubectl rollout status deployment/blogy-backend -n blogy || true
-            echo "Deployment successful"
+    # 5. Deploy to EC2 Kubernetes.
+    - name: Deploy to Kubernetes
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_PUBLIC_IP }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: | # Image update only (No git pull!)
+          kubectl set image deployment/blogy-frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-frontend:${{ github.sha }} -n blogy
+          kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-backend:${{ github.sha }} -n blogy
+          kubectl rollout status deployment/blogy-frontend --timeout=300s -n blogy
+          kubectl rollout status deployment/blogy-backend --timeout=300s -n blogy
+          kubectl get svc -n blogy
+          echo "🚀 Deployment LIVE!"
