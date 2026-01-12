@@ -45,3 +45,8 @@ jobs:
           kubectl rollout status deployment/blogy-backend --timeout=300s -n blogy
           kubectl get svc -n blogy
           echo "🚀 Deployment LIVE!"
+          
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n blogy
+        kubectl get svc -n blogy
