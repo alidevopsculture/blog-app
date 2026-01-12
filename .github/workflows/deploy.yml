@@ -39,13 +39,13 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: | # Image update only (No git pull!)
-          kubectl set image deployment/blogy-frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-frontend:${{ github.sha }} -n blogy
-          kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-backend:${{ github.sha }} -n blogy
+          kubectl set image deployment/blogy-frontend blogy-frontend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-frontend-image:${{ github.sha }} -n blogy
+          kubectl set image deployment/blogy-backend blogy-backend=${{ secrets.DOCKERHUB_USERNAME}}/blogy-backend-image:${{ github.sha }} -n blogy
           kubectl rollout status deployment/blogy-frontend --timeout=300s -n blogy
           kubectl rollout status deployment/blogy-backend --timeout=300s -n blogy
           kubectl get svc -n blogy
           echo "🚀 Deployment LIVE!"
-          
+
     - name: Verify deployment
       run: |
         kubectl get pods -n blogy
