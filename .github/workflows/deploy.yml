@@ -43,7 +43,9 @@ jobs:
             sudo docker stop blogy-backend
             sudo docker rm -f blogy-frontend 
             sudo docker rm -f blogy-backend
-            sudo docker run -d -p 80:80 --name blogy-frontend ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
+            sudo docker run -d -p 80:80 --name blogy-frontend \
+            -e VITE_API_URL=http://3.109.216.120:3000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
             sudo docker run -d -p 3000:3000 --name blogy-backend \
              -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
