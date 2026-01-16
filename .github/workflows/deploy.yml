@@ -33,16 +33,16 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-backend
-            sudo docker stop ${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend
-            sudo docker stop ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend
-            sudo docker rm -f ${{ secrets.DOCKERHUB_USERNAME }}/blogy-frontend 
-            sudo docker rm -f ${{ secrets.DOCKERHUB_USERNAME }}/blogy-backend
+            sudo docker stop blogy-frontend
+            sudo docker stop blogy-backend
+            sudo docker rm -f blogy-frontend 
+            sudo docker rm -f blogy-backend
             sudo docker run -d -p 80:80 --name blogy-frontend ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
             sudo docker run -d -p 3000:3000 --name blogy-backend ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-backend
             sudo docker rm -f $(sudo docker ps -aq --filter "status=exited")
