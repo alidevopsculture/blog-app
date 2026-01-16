@@ -45,4 +45,3 @@ jobs:
             sudo docker rm -f blogy-backend
             sudo docker run -d -p 80:80 --name blogy-frontend ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
             sudo docker run -d -p 3000:3000 --name blogy-backend ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-backend
-            sudo docker rm -f $(sudo docker ps -aq --filter "status=exited")
