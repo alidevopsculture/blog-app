@@ -34,8 +34,8 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-frontend
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/blogy-img-backend
