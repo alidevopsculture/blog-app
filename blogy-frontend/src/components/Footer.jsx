@@ -71,7 +71,7 @@ const Footer = () => {
 
         <div className="section footer-bottom">
           <p className="copyright">
-            &copy; Blogy 2022. Published by <a href="#" className="copyright-link hover:underline">codewithsadee</a>.
+            &copy; Blogy 2025. Published by <a href="#" className="copyright-link hover:underline">Ali Murtaza</a>
           </p>
         </div>
       </div>
