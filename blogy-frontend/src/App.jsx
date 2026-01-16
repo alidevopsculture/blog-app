@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Header from './components/Header'
 import Footer from './components/Footer.jsx'
+import WelcomePopup from './components/WelcomePopup'
 import Home from './pages/Home'
 import WriteBlog from './pages/WriteBlog'
 import BlogView from './pages/BlogView'
@@ -21,6 +22,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
+          <WelcomePopup />
           <Header />
           <Routes>
             <Route path="/" element={<Home userPosts={userPosts} />} />
