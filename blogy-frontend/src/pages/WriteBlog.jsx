@@ -5,8 +5,6 @@ import { useNavigate } from 'react-router-dom'
 const WriteBlog = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [showImageUpload, setShowImageUpload] = useState(false)
-  const [cursorPosition, setCursorPosition] = useState(0)
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -37,35 +35,14 @@ const WriteBlog = () => {
     navigate('/')
   }
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-    if (e.target.name === 'content') {
-      setCursorPosition(e.target.selectionStart)
-    }
-  }
-
-  const handlePaste = (e) => {
-    e.preventDefault()
-    const paste = e.clipboardData.getData('text')
-    const cleanText = paste.replace(/\s+/g, ' ').trim()
-    const textarea = e.target
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const newContent = formData.content.substring(0, start) + cleanText + formData.content.substring(end)
-    setFormData({...formData, content: newContent})
-  }
-
-  const insertImage = () => {
-    const imageUrl = prompt('Enter image URL:')
-    if (imageUrl) {
-      const textarea = document.querySelector('textarea[name="content"]')
-      const start = textarea.selectionStart
-      const imageTag = `\n\n[IMAGE: ${imageUrl}]\n\n`
-      const newContent = formData.content.substring(0, start) + imageTag + formData.content.substring(start)
-      setFormData({...formData, content: newContent})
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setFormData({...formData, image: e.target.result})
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -75,83 +52,68 @@ const WriteBlog = () => {
   }
 
   return (
-    <div className="write-blog-page">
-      <div className="container">
-        <h1>Write New Post</h1>
-        
-        <form onSubmit={handleSubmit} className="write-form">
-          <input
-            type="text"
-            name="title"
-            placeholder="Post Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-          
-          <div className="content-section">
-            <div className="content-toolbar">
-              <button 
-                type="button" 
-                className="add-image-btn"
-                onClick={() => setShowImageUpload(!showImageUpload)}
-                title="Add cover image"
-              >
-                📷
-              </button>
-              <button 
-                type="button" 
-                className="add-image-btn"
-                onClick={insertImage}
-                title="Insert image in content"
-              >
-                +
-              </button>
+    <div className="modern-write-page">
+      <div className="write-header">
+        <div className="write-header-container">
+          <div className="user-info">
+            <img src={user.avatar} alt={user.name} className="user-avatar-small" />
+            <span>{user.name}</span>
+          </div>
+          <div className="header-actions">
+            <button type="button" onClick={() => navigate('/')} className="btn-text">Cancel</button>
+            <button onClick={handleSubmit} className="btn-publish">Publish</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="write-container">
+        {!formData.image ? (
+          <div className="cover-upload">
+            <div className="upload-placeholder">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <p>Add a cover image to your article</p>
+              <label className="upload-btn">
+                <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
+                Upload from computer
+              </label>
             </div>
-            
-            {showImageUpload && (
-              <input
-                type="url"
-                name="image"
-                placeholder="Image URL (optional)"
-                value={formData.image}
-                onChange={handleChange}
-              />
-            )}
-            
-            <textarea
-              name="content"
-              placeholder="Write your post content...\n\nTip: Use [IMAGE: url] to add images inline"
-              value={formData.content}
-              onChange={handleChange}
-              onPaste={handlePaste}
-              rows="15"
-              required
-              style={{
-                fontFamily: 'Georgia, serif',
-                fontSize: '16px',
-                lineHeight: '1.6',
-                whiteSpace: 'pre-wrap'
-              }}
-            />
           </div>
+        ) : (
+          <div className="cover-preview">
+            <img src={formData.image} alt="Cover" />
+            <button className="remove-cover" onClick={() => setFormData({...formData, image: ''})}>
+              ×
+            </button>
+          </div>
+        )}
+
+        <div className="editor-content">
+          <textarea
+            className="title-input"
+            placeholder="Title"
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            rows="1"
+          />
+          
+          <textarea
+            className="content-input"
+            placeholder="Write here. You can paste formatted text and it will preserve formatting."
+            value={formData.content}
+            onChange={(e) => setFormData({...formData, content: e.target.value})}
+          />
           
           <input
-            type="text"
-            name="tags"
-            placeholder="Tags (comma separated)"
+            className="tags-input"
+            placeholder="Add tags (comma separated)"
             value={formData.tags}
-            onChange={handleChange}
+            onChange={(e) => setFormData({...formData, tags: e.target.value})}
           />
-          <div className="form-actions">
-            <button type="button" onClick={() => navigate('/')} className="btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn">
-              Publish Post
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   )

@@ -8,34 +8,50 @@ const PublisherProfile = () => {
   const [publisherPosts, setPublisherPosts] = useState([])
 
   useEffect(() => {
-    // Get publisher data from topAuthors or create fallback
-    const authorData = topAuthors.find(author => author.id === publisherId)
+    // Get actual user data from localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const userData = users.find(u => u.id === publisherId)
     
-    // If no author data found, create a proper name from the ID
-    let publisherName = authorData?.name
-    if (!publisherName) {
-      // Convert numeric ID to a proper name
-      const names = ['Alex Johnson', 'Sarah Wilson', 'Mike Chen', 'Emma Davis', 'John Smith']
-      const index = parseInt(publisherId) % names.length
-      publisherName = names[index] || `User ${publisherId}`
+    // Get profile data if exists
+    const profileData = JSON.parse(localStorage.getItem(`profile_${publisherId}`) || '{}')
+    
+    if (userData || profileData.name) {
+      const mockPublisher = {
+        id: publisherId,
+        name: profileData.name || userData?.name || 'Anonymous User',
+        avatar: profileData.avatar || userData?.avatar || '',
+        bio: profileData.bio || 'Writer and content creator.',
+        joinDate: userData?.joinDate ? new Date(userData.joinDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently',
+        totalPosts: 0,
+        followers: 0
+      }
+      
+      setPublisher(mockPublisher)
+    } else {
+      // Fallback for demo authors
+      const authorData = topAuthors.find(author => author.id === publisherId)
+      if (authorData) {
+        setPublisher({
+          id: publisherId,
+          name: authorData.name,
+          avatar: authorData.avatar,
+          bio: 'Featured author on our platform.',
+          joinDate: 'January 2024',
+          totalPosts: authorData.postsCount || 0,
+          followers: 0
+        })
+      }
     }
-    
-    const mockPublisher = {
-      id: publisherId,
-      name: publisherName,
-      avatar: authorData?.avatar || `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face`,
-      bio: 'Passionate writer sharing thoughts and ideas with the world.',
-      joinDate: 'January 2024',
-      totalPosts: authorData?.postsCount || 12,
-      followers: 156
-    }
-    
-    setPublisher(mockPublisher)
     
     // Get posts by this publisher
     const userPosts = JSON.parse(localStorage.getItem('userPosts') || '[]')
     const posts = userPosts.filter(post => post.authorId?.toString() === publisherId)
     setPublisherPosts(posts)
+    
+    // Update total posts count
+    if (publisher) {
+      setPublisher(prev => ({ ...prev, totalPosts: posts.length }))
+    }
   }, [publisherId])
 
   if (!publisher) return <div>Loading...</div>
@@ -44,7 +60,13 @@ const PublisherProfile = () => {
     <div className="publisher-profile-page">
       <div className="container">
         <div className="publisher-header">
-          <img src={publisher.avatar} alt={publisher.name} className="publisher-avatar" />
+          {publisher.avatar ? (
+            <img src={publisher.avatar} alt={publisher.name} className="publisher-avatar" />
+          ) : (
+            <div className="profile-avatar-placeholder" style={{width: '120px', height: '120px'}}>
+              {publisher.name?.charAt(0) || 'U'}
+            </div>
+          )}
           <div className="publisher-info">
             <h1>{publisher.name}</h1>
             <p className="publisher-bio">{publisher.bio}</p>

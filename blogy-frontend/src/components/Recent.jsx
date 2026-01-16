@@ -9,11 +9,23 @@ const Recent = ({ userPosts = [] }) => {
     navigate(`/publisher/${authorId || 'demo'}`)
   }
   
-  const handleShare = (post, e) => {
+  const handleShare = async (post, e) => {
     e.stopPropagation()
     const url = `${window.location.origin}/blog/${post.id}`
+    
     if (navigator.share) {
-      navigator.share({title: post.title, url})
+      try {
+        await navigator.share({
+          title: post.title,
+          text: post.excerpt,
+          url: url
+        })
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          navigator.clipboard.writeText(url)
+          alert('Link copied to clipboard!')
+        }
+      }
     } else {
       navigator.clipboard.writeText(url)
       alert('Link copied to clipboard!')
