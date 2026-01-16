@@ -14,7 +14,8 @@ const Auth = ({ onClose }) => {
 
   const sendOTP = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/send-otp', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
